@@ -57,7 +57,7 @@ async function boot(userOptions?: Partial<CircuitStartOptions>): Promise<void> {
   };
 
   window.addEventListener(
-    'unload',
+    'beforeunload',
     () => {
       const data = new FormData();
       const circuitId = circuit.circuitId!;
