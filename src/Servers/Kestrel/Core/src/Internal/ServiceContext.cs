@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO.Pipelines;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 
@@ -14,6 +15,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal
         public PipeScheduler Scheduler { get; set; }
 
         public IHttpParser<Http1ParsingHandler> HttpParser { get; set; }
+
+        public IHeaderDecoder HeaderDecoder { get; set; }
 
         public ISystemClock SystemClock { get; set; }
 

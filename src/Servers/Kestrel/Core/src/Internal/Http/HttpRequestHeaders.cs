@@ -6,6 +6,7 @@ using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -17,12 +18,12 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
         private long _previousBits = 0;
 
         public bool ReuseHeaderValues { get; set; }
-        public bool UseLatin1 { get; set; }
+        public Func<string, Encoding> EncodingSelector { get; set; }
 
-        public HttpRequestHeaders(bool reuseHeaderValues = true, bool useLatin1 = false)
+        public HttpRequestHeaders(bool reuseHeaderValues = true, Func<string, Encoding> encodingSelector = null)
         {
             ReuseHeaderValues = reuseHeaderValues;
-            UseLatin1 = useLatin1;
+            EncodingSelector = encodingSelector ?? KestrelServerOptions.DefaultRequestHeaderEncodingSelector;
         }
 
         public void OnHeadersComplete()
@@ -87,7 +88,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http
                 parsed < 0 ||
                 consumed != value.Length)
             {
-                KestrelBadHttpRequestException.Throw(RequestRejectionReason.InvalidContentLength, value.GetRequestHeaderStringNonNullCharacters(UseLatin1));
+                KestrelBadHttpRequestException.Throw(RequestRejectionReason.InvalidContentLength, value.GetRequestHeaderString(HeaderNames.ContentLength, EncodingSelector));
             }
 
             _contentLength = parsed;
